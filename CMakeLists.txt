@@ -1,21 +1,13 @@
 cmake_minimum_required(VERSION 3.5)
 project(pong)
 
-# SETTINGS
-
-set(GAME_TARGET pong)
-
-if(WIN32)
-    set(CMAKE_WIN32_EXECUTABLE TRUE)
-endif()
+add_subdirectory(${PROJECT_SOURCE_DIR}/lib/raylib)
 
 # GAME TARGET
 
+set(GAME_TARGET pong)
 add_executable(${GAME_TARGET} src/main.c)
-
-if(WIN32)
-    target_link_libraries(${GAME_TARGET} user32.lib)
-endif()
+target_link_libraries(${GAME_TARGET} raylib)
 
 # CREATING BIN DIRECTORY
 
