@@ -19,7 +19,7 @@ set(GAME_SOURCES
 
 add_executable(Game ${GAME_SOURCES} data.c)
 target_link_libraries(Game raylib)
-target_include_directories(Game PUBLIC ${PROJECT_SOURCE_DIR}/lib/incbin)
+target_include_directories(Game PUBLIC ${PROJECT_SOURCE_DIR}/lib/incbin ${PROJECT_SOURCE_DIR}/include)
 
 # COPYING GAME ASSETS
 

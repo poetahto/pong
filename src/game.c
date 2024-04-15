@@ -19,19 +19,21 @@ void RunGame() {
             // render
             BeginDrawing();
             ClearBackground(BLACK);
-            RenderPlayer();
-            RenderBalls();
             RenderObjectives();
+            RenderBalls();
+            RenderPlayer();
             EndDrawing();
             break;
         }
 
         case GameOver:
+            // update
             if (IsKeyPressed(KEY_ENTER)) {
                 PlaySound(gRestartSound);
                 ChangeGameStateTo(GamePlaying);
             }
 
+            // render
             BeginDrawing();
             ClearBackground(BLACK);
             DrawText("GAME OVER", GAME_WIDTH / 2, GAME_HEIGHT / 2, 40, WHITE);
@@ -44,16 +46,14 @@ void RunGame() {
 void ChangeGameStateTo(GameState newState) {
     sCurrentGameState = newState;
 
-    switch (sCurrentGameState) { // enter logic
-        case GamePlaying: {
+    switch (sCurrentGameState) {
+        case GamePlaying:
             InitPlayer();
             InitObjectives();
             InitBalls();
             break;
-        }
-        case GameOver: {
+        case GameOver:
             PlaySound(gRestartSound);
             break;
-        }
     }
 }
