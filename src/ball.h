@@ -12,7 +12,8 @@
 #define BOUNCE_EFFECT_MAX_SIZE 5    // multiple of original size
 #define BOUNCE_EFFECT_WIDTH 2       // in pixels
 
-void SpawnBall();
-void UpdateBalls();
+void InitBalls();
+void UpdateBalls(float deltaTime);
+void RenderBalls();
 
 #endif // PONG_BALL_H

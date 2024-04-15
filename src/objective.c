@@ -4,6 +4,7 @@
 #include "objective.h"
 #include "sound.h"
 #include "game.h"
+#include "player.h"
 
 #define OBJECTIVE_GROUP_SIZE 3
 #define OBJECTIVE_SIZE 40        // in pixels
@@ -24,18 +25,18 @@ static Objective sObjectives[OBJECTIVE_GROUP_SIZE];
 static float sObjectiveDelayTime;
 static ObjectiveState sCurrentObjectiveState;
 
+void InitObjectives() {
+    gCollectedObjectives = 0;
+    for (int i = 0; i < OBJECTIVE_GROUP_SIZE; ++i) {
+        sObjectives[i].size = 0;
+    }
+    ChangeObjectiveStateTo(ObjectivesDelayed);
+}
+
 void ChangeObjectiveStateTo(ObjectiveState state) {
     sCurrentObjectiveState = state;
 
     switch (state) {
-        case ObjectivesInitialized: {
-            gCollectedObjectives = 0;
-            for (int i = 0; i < OBJECTIVE_GROUP_SIZE; ++i) {
-                sObjectives[i].size = 0;
-            }
-            ChangeObjectiveStateTo(ObjectivesDelayed);
-            break;
-        }
         case ObjectivesActive: {
             for (int i = 0; i < OBJECTIVE_GROUP_SIZE; ++i) {
                 sObjectives[i].isCollected = false;
@@ -55,7 +56,7 @@ void ChangeObjectiveStateTo(ObjectiveState state) {
     }
 }
 
-void UpdateObjectives(float deltaTime, Rectangle playerRect) {
+void UpdateObjectives(float deltaTime) {
     // update objective size
     for (int i = 0; i < OBJECTIVE_GROUP_SIZE; ++i) {
         float targetSize = sObjectives[i].isCollected ? 0.0f : OBJECTIVE_SIZE;
@@ -67,7 +68,7 @@ void UpdateObjectives(float deltaTime, Rectangle playerRect) {
         case ObjectivesActive: {
             // check collision
             for (int i = 0; i < OBJECTIVE_GROUP_SIZE; ++i) {
-                if (!sObjectives[i].isCollected && CheckCollisionCircleRec(sObjectives[i].position, OBJECTIVE_SIZE, playerRect)) {
+                if (!sObjectives[i].isCollected && CheckCollisionCircleRec(sObjectives[i].position, OBJECTIVE_SIZE, GetPlayerRect())) {
                     PlaySound(gObjectiveCollectSound);
                     sObjectives[i].isCollected = true;
                     gCollectedObjectives++;
@@ -125,4 +126,7 @@ void RenderObjectives() {
         // render triangle
         DrawTriangle(vertexC, vertexB, vertexA, YELLOW);
     }
+
+    DrawText(TextFormat("%u collected", gCollectedObjectives), 190, 200, 20, WHITE);
+    DrawText(TextFormat("%u highscore", gHighScoreObjectives), 190, 180, 20, WHITE);
 }

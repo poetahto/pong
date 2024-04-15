@@ -5,13 +5,13 @@ extern int gCollectedObjectives;
 extern int gHighScoreObjectives;
 
 typedef enum ObjectiveState {
-    ObjectivesInitialized,
     ObjectivesActive,
     ObjectivesDelayed
 } ObjectiveState;
 
+void InitObjectives();
 void ChangeObjectiveStateTo(ObjectiveState state);
-void UpdateObjectives(float deltaTime, Rectangle playerRect);
+void UpdateObjectives(float deltaTime);
 void RenderObjectives();
 
 #endif // PONG_OBJECTIVE_H
