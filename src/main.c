@@ -24,7 +24,7 @@ int main(void) {
     InitAudioDevice();
     LoadSounds();
 
-    ChangeGameStateTo(GamePlaying);
+    ChangeGameStateTo(GAME_STATE_PLAYING);
 
     while (!WindowShouldClose()) {
         RunGame();

@@ -5,8 +5,8 @@ extern int gCollectedObjectives;
 extern int gHighScoreObjectives;
 
 typedef enum ObjectiveState {
-    ObjectivesActive,
-    ObjectivesDelayed
+    OBJECTIVE_STATE_ACTIVE,
+    OBJECTIVE_STATE_DELAYED
 } ObjectiveState;
 
 void InitObjectives();

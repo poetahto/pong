@@ -5,8 +5,8 @@
 #define GAME_HEIGHT 600
 
 typedef enum GameState {
-    GamePlaying,
-    GameOver
+    GAME_STATE_PLAYING,
+    GAME_STATE_OVER
 } GameState;
 
 void RunGame();

@@ -30,14 +30,14 @@ void InitObjectives() {
     for (int i = 0; i < OBJECTIVE_GROUP_SIZE; ++i) {
         sObjectives[i].size = 0;
     }
-    ChangeObjectiveStateTo(ObjectivesDelayed);
+    ChangeObjectiveStateTo(OBJECTIVE_STATE_DELAYED);
 }
 
 void ChangeObjectiveStateTo(ObjectiveState state) {
     sCurrentObjectiveState = state;
 
     switch (state) {
-        case ObjectivesActive: {
+        case OBJECTIVE_STATE_ACTIVE: {
             for (int i = 0; i < OBJECTIVE_GROUP_SIZE; ++i) {
                 sObjectives[i].isCollected = false;
                 sObjectives[i].position.x = (float) GetRandomValue(OBJECTIVE_SIZE, GAME_WIDTH - OBJECTIVE_SIZE);
@@ -46,7 +46,7 @@ void ChangeObjectiveStateTo(ObjectiveState state) {
             }
             break;
         }
-        case ObjectivesDelayed: {
+        case OBJECTIVE_STATE_DELAYED: {
             for (int i = 0; i < OBJECTIVE_GROUP_SIZE; ++i) {
                 sObjectives[i].isCollected = true;
             }
@@ -65,7 +65,7 @@ void UpdateObjectives(float deltaTime) {
 
     // state logic
     switch (sCurrentObjectiveState) {
-        case ObjectivesActive: {
+        case OBJECTIVE_STATE_ACTIVE: {
             // check collision
             for (int i = 0; i < OBJECTIVE_GROUP_SIZE; ++i) {
                 if (!sObjectives[i].isCollected && CheckCollisionCircleRec(sObjectives[i].position, OBJECTIVE_SIZE, GetPlayerRect())) {
@@ -86,16 +86,16 @@ void UpdateObjectives(float deltaTime) {
                     }
 
                     if (remainingObjectives == 0) {
-                        ChangeObjectiveStateTo(ObjectivesDelayed);
+                        ChangeObjectiveStateTo(OBJECTIVE_STATE_DELAYED);
                     }
                 }
             }
             break;
         }
-        case ObjectivesDelayed: {
+        case OBJECTIVE_STATE_DELAYED: {
             sObjectiveDelayTime -= deltaTime;
             if (sObjectiveDelayTime <= 0) {
-                ChangeObjectiveStateTo(ObjectivesActive);
+                ChangeObjectiveStateTo(OBJECTIVE_STATE_ACTIVE);
             }
             break;
         }

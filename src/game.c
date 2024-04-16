@@ -9,7 +9,7 @@ static GameState sCurrentGameState;
 
 void RunGame() {
     switch (sCurrentGameState) {
-        case GamePlaying: {
+        case GAME_STATE_PLAYING: {
             // update
             float deltaTime = GetFrameTime();
             UpdatePlayer(deltaTime);
@@ -26,11 +26,11 @@ void RunGame() {
             break;
         }
 
-        case GameOver:
+        case GAME_STATE_OVER:
             // update
             if (IsKeyPressed(KEY_ENTER)) {
                 PlaySound(gRestartSound);
-                ChangeGameStateTo(GamePlaying);
+                ChangeGameStateTo(GAME_STATE_PLAYING);
             }
 
             // render
@@ -47,12 +47,14 @@ void ChangeGameStateTo(GameState newState) {
     sCurrentGameState = newState;
 
     switch (sCurrentGameState) {
-        case GamePlaying:
+        case GAME_STATE_PLAYING:
             InitPlayer();
             InitObjectives();
             InitBalls();
+            SpawnBall();
+            SpawnBall();
             break;
-        case GameOver:
+        case GAME_STATE_OVER:
             PlaySound(gRestartSound);
             break;
     }

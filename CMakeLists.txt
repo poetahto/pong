@@ -15,6 +15,7 @@ set(GAME_SOURCES
     ${PROJECT_SOURCE_DIR}/src/objective.c
     ${PROJECT_SOURCE_DIR}/src/sound.c
     ${PROJECT_SOURCE_DIR}/src/game.c
+    ${PROJECT_SOURCE_DIR}/src/math_util.c
 )
 
 add_executable(Game ${GAME_SOURCES} data.c)
