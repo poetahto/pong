@@ -16,11 +16,12 @@ set(GAME_SOURCES
     ${PROJECT_SOURCE_DIR}/src/sound.c
     ${PROJECT_SOURCE_DIR}/src/game.c
     ${PROJECT_SOURCE_DIR}/src/math_util.c
+    ${PROJECT_SOURCE_DIR}/src/particles.c
 )
 
 add_executable(Game ${GAME_SOURCES} data.c)
 target_link_libraries(Game raylib)
-target_include_directories(Game PUBLIC ${PROJECT_SOURCE_DIR}/lib/incbin ${PROJECT_SOURCE_DIR}/include)
+target_include_directories(Game PUBLIC ${PROJECT_SOURCE_DIR}/lib/incbin ${PROJECT_SOURCE_DIR}/lib/raylib/src ${PROJECT_SOURCE_DIR}/include)
 
 # COPYING GAME ASSETS
 

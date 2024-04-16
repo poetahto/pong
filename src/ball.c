@@ -6,6 +6,7 @@
 #include "sound.h"
 #include "player.h"
 #include "math_util.h"
+#include "particles.h"
 
 typedef struct BounceEffect {
     float remainingTime;
@@ -23,10 +24,10 @@ typedef struct BallInstance {
         struct {
             Vector2 velocity;
             float timeSinceBounce;
-        } activeData;
+        } active;
         struct {
             float elapsedTime;
-        } spawningData;
+        } spawning;
     };
     float size;
     Vector2 position;
@@ -42,7 +43,7 @@ static int sSpawnedBallCount;
 
 void SpawnBall() {
     BallInstance newBallInstance = {
-        .spawningData = {
+        .spawning = {
             .elapsedTime = 0,
         },
         .position = {
@@ -50,7 +51,7 @@ void SpawnBall() {
             .y = RandomFloat() * GAME_HEIGHT,
         },
         .size = 0,
-        .color = RandomColor(),
+        .color = WHITE,
         .state = BALL_STATE_SPAWNING,
     };
     sSpawnedBalls[sSpawnedBallCount] = newBallInstance;
@@ -60,7 +61,18 @@ void SpawnBall() {
 void RenderBalls() {
     for (int i = 0; i < sSpawnedBallCount; ++i) {
         BallInstance *ball = &sSpawnedBalls[i];
-        DrawCircleV(ball->position, ball->size, ball->color);
+
+        switch (ball->state) {
+            case BALL_STATE_SPAWNING: {
+                float spawnPercent = ball->spawning.elapsedTime / BALL_SPAWN_TIME;
+                DrawRing(ball->position, ball->size * SmoothStop3(1 - spawnPercent), ball->size, 0, 360, 30, ball->color);
+                break;
+            }
+            case BALL_STATE_ACTIVE: {
+                DrawCircleV(ball->position, ball->size, ball->color);
+                break;
+            }
+        }
     }
 
     for (int i = 0; i < MAX_BOUNCE_EFFECTS; ++i) {
@@ -105,47 +117,47 @@ void UpdateBalls(float deltaTime) {
 
         switch (ball->state) {
             case BALL_STATE_SPAWNING: {
-                float t = ball->spawningData.elapsedTime / BALL_SPAWN_TIME;
+                float t = ball->spawning.elapsedTime / BALL_SPAWN_TIME;
                 ball->size = Lerp(0, BALL_SIZE, t);
-                ball->spawningData.elapsedTime += GetFrameTime();
+                ball->spawning.elapsedTime += GetFrameTime();
 
                 if (t >= 1) {
                     ball->state = BALL_STATE_ACTIVE;
-                    ball->activeData.timeSinceBounce = 0;
-                    ball->activeData.velocity = Vector2Scale(RandomPointOnUnitCircle(), BALL_SPEED);
+                    ball->active.timeSinceBounce = 0;
+                    ball->active.velocity = Vector2Scale(RandomPointOnUnitCircle(), BALL_SPEED);
                 }
 
                 break;
             }
             case BALL_STATE_ACTIVE: {
                 // update ball
-                ball->activeData.timeSinceBounce += deltaTime;
+                ball->active.timeSinceBounce += deltaTime;
 
                 // how close are we to going max-speed?
-                float velocityPercent = Clamp(ball->activeData.timeSinceBounce / BALL_ACCELERATION_TIME, 0, 1);
+                float velocityPercent = Clamp(ball->active.timeSinceBounce / BALL_ACCELERATION_TIME, 0, 1);
                 // update velocity based on acceleration rate
                 Vector2 initialVelocity = Vector2Scale(
-                    Vector2Normalize(ball->activeData.velocity), BALL_SPEED);
+                    Vector2Normalize(ball->active.velocity), BALL_SPEED);
                 Vector2 targetVelocity = Vector2Scale(
-                    Vector2Normalize(ball->activeData.velocity), BALL_MAX_SPEED);
-                ball->activeData.velocity = Vector2Lerp(initialVelocity, targetVelocity, velocityPercent);
+                    Vector2Normalize(ball->active.velocity), BALL_MAX_SPEED);
+                ball->active.velocity = Vector2Lerp(initialVelocity, targetVelocity, velocityPercent);
 
                 // update position based on velocity for this frame
                 ball->position = Vector2Add(
-                    Vector2Scale(ball->activeData.velocity, deltaTime), ball->position);
+                    Vector2Scale(ball->active.velocity, deltaTime), ball->position);
 
                 ball->size = Lerp(BALL_SIZE, BALL_MIN_SIZE, velocityPercent);
 
                 // bounce off-screen top/bottom
                 if (ball->position.x > GAME_WIDTH || ball->position.x < 0) {
-                    ball->activeData.velocity.x = -ball->activeData.velocity.x;
+                    ball->active.velocity.x = -ball->active.velocity.x;
                     ball->position.x = Clamp(ball->position.x, 0, GAME_WIDTH);
                     HandleBounce(ball);
                 }
 
                 // bounce off-screen left/right
                 if (ball->position.y > GAME_HEIGHT || ball->position.y < 0) {
-                    ball->activeData.velocity.y = -ball->activeData.velocity.y;
+                    ball->active.velocity.y = -ball->active.velocity.y;
                     ball->position.y = Clamp(ball->position.y, 0, GAME_HEIGHT);
                     HandleBounce(ball);
                 }
@@ -161,16 +173,16 @@ void UpdateBalls(float deltaTime) {
 
 static void HandleBounce(BallInstance *ball) {
     // find the first unused effect
-    int effectId = -1;
+    BounceEffect *bounceEffect = NULL;
 
     for (int i = 0; i < MAX_BOUNCE_EFFECTS; ++i) {
-        if (sBounceEffects[i].remainingTime <= 0) {
-            effectId = i;
+        bounceEffect = &sBounceEffects[i];
+        if (bounceEffect->remainingTime <= 0) {
             break;
         }
     }
 
-    if (effectId == -1) {
+    if (bounceEffect == NULL) {
         printf("ran out of bounce effects!\n");
         return;
     }
@@ -178,11 +190,11 @@ static void HandleBounce(BallInstance *ball) {
     PlaySound(gBallHitSound);
 
     // initialize new bounce effect
-    sBounceEffects[effectId].remainingTime = BOUNCE_EFFECT_DURATION;
-    sBounceEffects[effectId].position = ball->position;
-    sBounceEffects[effectId].color = ball->color;
+    bounceEffect->remainingTime = BOUNCE_EFFECT_DURATION;
+    bounceEffect->position = ball->position;
+    bounceEffect->color = ball->color;
 
     // reset ball speed + acceleration
-    ball->activeData.timeSinceBounce = 0;
-    ball->activeData.velocity = Vector2Scale(Vector2Normalize(ball->activeData.velocity), BALL_SPEED);
+    ball->active.timeSinceBounce = 0;
+    ball->active.velocity = Vector2Scale(Vector2Normalize(ball->active.velocity), BALL_SPEED);
 }

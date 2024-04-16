@@ -5,6 +5,7 @@
 #include "sound.h"
 #include "game.h"
 #include "player.h"
+#include "particles.h"
 
 #define OBJECTIVE_GROUP_SIZE 3
 #define OBJECTIVE_SIZE 40        // in pixels
@@ -70,11 +71,9 @@ void UpdateObjectives(float deltaTime) {
             for (int i = 0; i < OBJECTIVE_GROUP_SIZE; ++i) {
                 if (!sObjectives[i].isCollected && CheckCollisionCircleRec(sObjectives[i].position, OBJECTIVE_SIZE, GetPlayerRect())) {
                     PlaySound(gObjectiveCollectSound);
+                    PlayParticleBurst(sObjectives[i].position, YELLOW, 5);
                     sObjectives[i].isCollected = true;
                     gCollectedObjectives++;
-                    if (gCollectedObjectives > gHighScoreObjectives) {
-                        gHighScoreObjectives = gCollectedObjectives;
-                    }
 
                     // check to see if we collected everything
                     int remainingObjectives = OBJECTIVE_GROUP_SIZE;
@@ -103,7 +102,8 @@ void UpdateObjectives(float deltaTime) {
 }
 
 void RenderObjectives() {
-    DrawText(TextFormat("%u collected", gCollectedObjectives), 190, 200, 20, WHITE);
+    bool isSettingHighscore = gCollectedObjectives > gHighScoreObjectives;
+    DrawText(TextFormat("%u collected", gCollectedObjectives), 190, 200, 20, isSettingHighscore ? GREEN : RED);
     DrawText(TextFormat("%u highscore", gHighScoreObjectives), 190, 180, 20, WHITE);
 
     for (int i = 0; i < OBJECTIVE_GROUP_SIZE; ++i) {

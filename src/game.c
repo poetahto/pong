@@ -4,6 +4,7 @@
 #include "ball.h"
 #include "objective.h"
 #include "player.h"
+#include "particles.h"
 
 static GameState sCurrentGameState;
 
@@ -15,11 +16,13 @@ void RunGame() {
             UpdatePlayer(deltaTime);
             UpdateBalls(deltaTime);
             UpdateObjectives(deltaTime);
+            UpdateParticles(deltaTime);
 
             // render
             BeginDrawing();
             ClearBackground(BLACK);
             RenderObjectives();
+            RenderParticles();
             RenderBalls();
             RenderPlayer();
             EndDrawing();
@@ -52,8 +55,12 @@ void ChangeGameStateTo(GameState newState) {
             InitObjectives();
             InitBalls();
             SpawnBall();
+            SpawnBall();
             break;
         case GAME_STATE_OVER:
+            if (gCollectedObjectives > gHighScoreObjectives) {
+                gHighScoreObjectives = gCollectedObjectives;
+            }
             PlaySound(gRestartSound);
             break;
     }
