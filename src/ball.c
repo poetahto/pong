@@ -10,6 +10,7 @@
 typedef struct BounceEffect {
     float remainingTime;
     Vector2 position;
+    Color color;
 } BounceEffect;
 
 typedef enum BallState {
@@ -49,6 +50,7 @@ void SpawnBall() {
             .y = RandomFloat() * GAME_HEIGHT,
         },
         .size = 0,
+        .color = RandomColor(),
         .state = BALL_STATE_SPAWNING,
     };
     sSpawnedBalls[sSpawnedBallCount] = newBallInstance;
@@ -57,7 +59,8 @@ void SpawnBall() {
 
 void RenderBalls() {
     for (int i = 0; i < sSpawnedBallCount; ++i) {
-        DrawCircleV(sSpawnedBalls[i].position, sSpawnedBalls[i].size, WHITE);
+        BallInstance *ball = &sSpawnedBalls[i];
+        DrawCircleV(ball->position, ball->size, ball->color);
     }
 }
 
@@ -85,12 +88,13 @@ void UpdateBalls(float deltaTime) {
             1 + ((BOUNCE_EFFECT_MAX_SIZE - 1) * (1 - t));
 
         // the color should fade out as the effect completes
-        Color color = WHITE;
+        Color color = sBounceEffects[i].color;
         color.a = (unsigned char)((float) color.a * t);
 
         // render the bounce effect
         float outerRadius = BALL_SIZE * bounceSizeMultiplier;
         float innerRadius = fmaxf(outerRadius - BOUNCE_EFFECT_WIDTH, 0);
+        // todo: move to render
         DrawRing(sBounceEffects[i].position, innerRadius, outerRadius, 
                     0, 360, 30, color);
     }
@@ -175,6 +179,7 @@ static void HandleBounce(BallInstance *ball) {
     // initialize new bounce effect
     sBounceEffects[effectId].remainingTime = BOUNCE_EFFECT_DURATION;
     sBounceEffects[effectId].position = ball->position;
+    sBounceEffects[effectId].color = ball->color;
 
     // reset ball speed + acceleration
     ball->activeData.timeSinceBounce = 0;

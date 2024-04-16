@@ -6,5 +6,6 @@
 
 float RandomFloat();
 Vector2 RandomPointOnUnitCircle();
+Color RandomColor();
 
 #endif // PONG_MATH_H

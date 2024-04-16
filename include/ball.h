@@ -3,7 +3,7 @@
 
 #define MAX_BALLS 5
 #define BALL_SIZE 35                // in pixels
-#define BALL_MIN_SIZE 6             // in pixels
+#define BALL_MIN_SIZE 15            // in pixels
 #define BALL_SPEED 10               // in pixels per second
 #define BALL_MAX_SPEED 2000         // in pixels per second
 #define BALL_ACCELERATION_TIME 0.5f // in seconds
