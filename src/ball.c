@@ -62,6 +62,25 @@ void RenderBalls() {
         BallInstance *ball = &sSpawnedBalls[i];
         DrawCircleV(ball->position, ball->size, ball->color);
     }
+
+    for (int i = 0; i < MAX_BOUNCE_EFFECTS; ++i) {
+        BounceEffect* bounceEffect = &sBounceEffects[i];
+
+        // find the percent complete we are with the effect
+        float t = sBounceEffects[i].remainingTime / BOUNCE_EFFECT_DURATION;
+
+        // the size multiplier should start at 1 and end at BOUNCE_EFFECT_MAX_SIZE
+        float bounceSizeMultiplier = 1 + ((BOUNCE_EFFECT_MAX_SIZE - 1) * (1 - t));
+
+        // the color should fade out as the effect completes
+        Color color = sBounceEffects[i].color;
+        color.a = (unsigned char)((float) color.a * t);
+
+        // render the bounce effect
+        float outerRadius = BALL_SIZE * bounceSizeMultiplier;
+        float innerRadius = fmaxf(outerRadius - BOUNCE_EFFECT_WIDTH, 0);
+        DrawRing(bounceEffect->position, innerRadius, outerRadius, 0, 360, 30, color);
+    }
 }
 
 void InitBalls() {
@@ -79,24 +98,6 @@ void UpdateBalls(float deltaTime) {
             continue;
         }
         sBounceEffects[i].remainingTime -= deltaTime;
-
-        // find the percent complete we are with the effect
-        float t = sBounceEffects[i].remainingTime / BOUNCE_EFFECT_DURATION;
-
-        // the size multiplier should start at 1 and end at BOUNCE_EFFECT_MAX_SIZE
-        float bounceSizeMultiplier = 
-            1 + ((BOUNCE_EFFECT_MAX_SIZE - 1) * (1 - t));
-
-        // the color should fade out as the effect completes
-        Color color = sBounceEffects[i].color;
-        color.a = (unsigned char)((float) color.a * t);
-
-        // render the bounce effect
-        float outerRadius = BALL_SIZE * bounceSizeMultiplier;
-        float innerRadius = fmaxf(outerRadius - BOUNCE_EFFECT_WIDTH, 0);
-        // todo: move to render
-        DrawRing(sBounceEffects[i].position, innerRadius, outerRadius, 
-                    0, 360, 30, color);
     }
 
     for (int i = 0; i < sSpawnedBallCount; ++i) {

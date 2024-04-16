@@ -103,6 +103,9 @@ void UpdateObjectives(float deltaTime) {
 }
 
 void RenderObjectives() {
+    DrawText(TextFormat("%u collected", gCollectedObjectives), 190, 200, 20, WHITE);
+    DrawText(TextFormat("%u highscore", gHighScoreObjectives), 190, 180, 20, WHITE);
+
     for (int i = 0; i < OBJECTIVE_GROUP_SIZE; ++i) {
         float size = sObjectives[i].size;
 
@@ -126,7 +129,4 @@ void RenderObjectives() {
         // render triangle
         DrawTriangle(vertexC, vertexB, vertexA, YELLOW);
     }
-
-    DrawText(TextFormat("%u collected", gCollectedObjectives), 190, 200, 20, WHITE);
-    DrawText(TextFormat("%u highscore", gHighScoreObjectives), 190, 180, 20, WHITE);
 }

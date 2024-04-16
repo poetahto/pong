@@ -52,7 +52,6 @@ void ChangeGameStateTo(GameState newState) {
             InitObjectives();
             InitBalls();
             SpawnBall();
-            SpawnBall();
             break;
         case GAME_STATE_OVER:
             PlaySound(gRestartSound);
