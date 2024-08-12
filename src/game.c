@@ -56,6 +56,12 @@ void ChangeGameStateTo(GameState newState) {
             InitBalls();
             SpawnBall();
             SpawnBall();
+            SpawnBall();
+            SpawnBall();
+            SpawnBall();
+            SpawnBall();
+            SpawnBall();
+            SpawnBall();
             break;
         case GAME_STATE_OVER:
             if (gCollectedObjectives > gHighScoreObjectives) {

@@ -51,7 +51,7 @@ void SpawnBall() {
             .y = RandomFloat() * GAME_HEIGHT,
         },
         .size = 0,
-        .color = WHITE,
+        .color = RandomColor(),
         .state = BALL_STATE_SPAWNING,
     };
     sSpawnedBalls[sSpawnedBallCount] = newBallInstance;

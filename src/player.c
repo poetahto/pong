@@ -56,16 +56,13 @@ void UpdatePlayer(float deltaTime) {
 
     if (isAccelerating) {
         Vector2 targetVelocity = Vector2Scale(inputDirection, PLAYER_SPEED);
-        sPlayerVelocity = Vector2MoveTowards(
-            sPlayerVelocity, targetVelocity, PLAYER_ACCELERATION * deltaTime);
+        sPlayerVelocity = Vector2MoveTowards(sPlayerVelocity, targetVelocity, PLAYER_ACCELERATION * deltaTime);
     }
     else { // is decelerating
-        sPlayerVelocity = Vector2Lerp(
-                sPlayerVelocity, Vector2Zero(), PLAYER_DECELERATION * deltaTime);
+        sPlayerVelocity = Vector2Lerp(sPlayerVelocity, Vector2Zero(), PLAYER_DECELERATION * deltaTime);
     }
 
-    gPlayerPosition = Vector2Add(
-        gPlayerPosition, Vector2Scale(sPlayerVelocity, deltaTime));
+    gPlayerPosition = Vector2Add(gPlayerPosition, Vector2Scale(sPlayerVelocity, deltaTime));
 
     gPlayerPosition.x = Clamp(
         gPlayerPosition.x, 
@@ -82,9 +79,11 @@ void UpdatePlayer(float deltaTime) {
     sPlayerSize.y = Lerp(
         PLAYER_WIDTH,
         PLAYER_WIDTH * PLAYER_SQUISH_AMOUNT,
-        fabsf(sPlayerVelocity.x) / PLAYER_SPEED);
+        fabsf(sPlayerVelocity.x) / PLAYER_SPEED
+    );
     sPlayerSize.x = Lerp(
         PLAYER_HEIGHT,
         PLAYER_HEIGHT * PLAYER_SQUISH_AMOUNT,
-        fabsf(sPlayerVelocity.y) / PLAYER_SPEED);
+        fabsf(sPlayerVelocity.y) / PLAYER_SPEED
+    );
 }

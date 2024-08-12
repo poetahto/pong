@@ -1,12 +1,12 @@
 #ifndef PONG_BALL_H
 #define PONG_BALL_H
 
-#define MAX_BALLS 5
+#define MAX_BALLS 10
 #define BALL_SIZE 35                // in pixels
 #define BALL_MIN_SIZE 15            // in pixels
 #define BALL_SPEED 10               // in pixels per second
 // #define BALL_MAX_SPEED 2000         // in pixels per second
-#define BALL_MAX_SPEED 1000         // in pixels per second
+#define BALL_MAX_SPEED 250         // in pixels per second
 #define BALL_ACCELERATION_TIME 0.5f // in seconds
 #define BALL_SPAWN_TIME 1           // in seconds
 
